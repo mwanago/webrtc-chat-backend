@@ -70,4 +70,22 @@ export class ChatGateway {
       roomName,
     });
   }
+
+  @SubscribeMessage('send_candidate')
+  async sendCandidate(
+    @MessageBody()
+      {
+        candidate,
+        roomName,
+      }: {
+      candidate: unknown;
+      roomName: string;
+    },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    this.server.in(roomName).except(socket.id).emit('send_candidate', {
+      candidate,
+      roomName,
+    });
+  }
 }
