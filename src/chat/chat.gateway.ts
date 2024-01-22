@@ -28,6 +28,28 @@ export class ChatGateway {
       return;
     }
 
+    if (numberOfPeopleInRoom === 1) {
+      room.emit('another_person_ready');
+    }
+
     socket.join(roomName);
+  }
+
+  @SubscribeMessage('send_connection_offer')
+  async sendConnectionOffer(
+    @MessageBody()
+      {
+        offer,
+        roomName,
+      }: {
+      offer: unknown;
+      roomName: string;
+    },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    this.server.in(roomName).except(socket.id).emit('send_connection_offer', {
+      offer,
+      roomName,
+    });
   }
 }
