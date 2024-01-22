@@ -42,13 +42,31 @@ export class ChatGateway {
         offer,
         roomName,
       }: {
-      offer: unknown;
+      offer: RTCSessionDescriptionInit;
       roomName: string;
     },
     @ConnectedSocket() socket: Socket,
   ) {
     this.server.in(roomName).except(socket.id).emit('send_connection_offer', {
       offer,
+      roomName,
+    });
+  }
+
+  @SubscribeMessage('answer')
+  async answer(
+    @MessageBody()
+      {
+        answer,
+        roomName,
+      }: {
+      answer: RTCSessionDescriptionInit;
+      roomName: string;
+    },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    this.server.in(roomName).except(socket.id).emit('answer', {
+      answer,
       roomName,
     });
   }
